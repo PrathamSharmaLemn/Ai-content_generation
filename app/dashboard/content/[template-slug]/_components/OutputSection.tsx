@@ -4,17 +4,20 @@ import dynamic from 'next/dynamic';
 import { Button } from "@/components/ui/button";
 import { Copy } from "lucide-react";
 import MarkdownIt from 'markdown-it';
-import type { EditorProps } from 'react-markdown-editor-lite';
+import MdEditor from 'react-markdown-editor-lite';
 
-const MdEditor = dynamic<EditorProps>(() => import('react-markdown-editor-lite'), {
-  ssr: false
-});
-
+// Import the editor styles
 import 'react-markdown-editor-lite/lib/index.css';
 
 interface Props {
     aiOutput: string
 }
+
+// Create a dynamic import for the editor
+const MarkdownEditor = dynamic(() => import('react-markdown-editor-lite'), {
+  ssr: false,
+  loading: () => <p>Loading...</p>
+}) as typeof MdEditor;
 
 function OutputSection({ aiOutput }: Props) {
     const mdParser = new MarkdownIt();
@@ -31,9 +34,9 @@ function OutputSection({ aiOutput }: Props) {
                     <Copy className="w-4 h-4"/>Copy
                 </Button>
             </div>
-            <MdEditor
+            <MarkdownEditor
                 value={aiOutput || 'Your Result will appear here!'}
-                renderHTML={text => mdParser.render(text)}
+                renderHTML={(text: string) => mdParser.render(text)}
                 view={{ menu: false, md: false, html: true }}
                 canView={{ 
                     menu: true, 
@@ -41,6 +44,7 @@ function OutputSection({ aiOutput }: Props) {
                     html: true, 
                     fullScreen: false, 
                     hideMenu: false,
+                    both: true
                 }}
                 style={{ height: '600px' }}
                 readOnly={true}

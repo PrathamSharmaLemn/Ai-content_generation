@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { chatSession } from "@/utils/AIModel";
-import moment from "moment";
 
 interface PROPS {
     params: {
@@ -25,9 +24,14 @@ function CreateNewContent(props: PROPS) {
         setLoading(true)
         const SelectedPrompt = selectedTemplate?.aiPrompt;
         const FinalAIPrompt = JSON.stringify(formData) + ", " + SelectedPrompt;
-        const result = await chatSession.sendMessage(FinalAIPrompt)
-        setAiOutput(result?.response.text())
-        setLoading(false)
+        try {
+            const result = await chatSession.sendMessage(FinalAIPrompt)
+            setAiOutput(result?.response.text())
+        } catch (error) {
+            console.error('Error generating content:', error)
+        } finally {
+            setLoading(false)
+        }
     }
 
     return (
