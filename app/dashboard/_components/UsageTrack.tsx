@@ -1,15 +1,8 @@
 "use client"
 import { Button } from "@/components/ui/button";
-import {db} from '@/utils/db';
-import { AIOutput } from "@/utils/schema";
-import { useUser } from "@clerk/nextjs";
+import React from "react";
 
-import React, { useEffect } from "react";
-
- function UsageTrack(){
-
-        
-
+function UsageTrack() {
     return (
         <div className="m-5">
             <div className="bg-primary text-white rounded-lg p-3">
@@ -19,7 +12,13 @@ import React, { useEffect } from "react";
                 </div>
                 <h2 className="text-sm my-2 ">350/10,000 Credit Used</h2>
             </div>
-            <Button variant={"secondary"} className="w-full my-3 text-primary">Ugrade</Button>
+            <Button 
+                variant="secondary"
+                className="w-full my-3 text-primary"
+                type="button"
+            >
+                Upgrade
+            </Button>
         </div>
     )
 }

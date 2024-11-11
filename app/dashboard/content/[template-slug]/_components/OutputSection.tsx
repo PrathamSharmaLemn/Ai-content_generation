@@ -1,35 +1,52 @@
-import React, { useEffect, useRef } from "react";
-import '@toast-ui/editor/dist/toastui-editor.css'
-import { Editor } from "@toast-ui/react-editor";
+"use client"
+import React from "react";
+import dynamic from 'next/dynamic';
 import { Button } from "@/components/ui/button";
 import { Copy } from "lucide-react";
 
-interface props{
-    aiOutput:string
+// Import markdown-it with type declaration
+import MarkdownIt from 'markdown-it';
+declare module 'markdown-it';
+
+const MdEditor = dynamic(() => import('react-markdown-editor-lite'), {
+  ssr: false
+});
+
+import 'react-markdown-editor-lite/lib/index.css';
+
+interface props {
+    aiOutput: string
 }
 
-function OutputSection({aiOutput}:props){
-    const editorRef:any=useRef()
+function OutputSection({ aiOutput }: props) {
+    const mdParser = new MarkdownIt();
 
-    useEffect(()=>{
-        const editorInstance=editorRef.current.getInstance()
-        editorInstance.setMarkdown(aiOutput)
-    },[aiOutput])
+    const handleCopy = () => {
+        navigator.clipboard.writeText(aiOutput);
+    };
 
-    return(
+    return (
         <div className="bg-white shadow-lg border rounded-lg">
             <div className="flex justify-between items-center p-5">
                 <h2 className="font-medium text-lg">Your Result</h2>
-                <Button className="flex gap-2"><Copy className="w-4 h-4 "/>Copy </Button>
-                
+                <Button className="flex gap-2" onClick={handleCopy}>
+                    <Copy className="w-4 h-4"/>Copy
+                </Button>
             </div>
-            <Editor
-                ref={editorRef}
-                initialValue="Your Result will appear here!"
-                initialEditType="wysiwyg"
-                height="600px"
-                useCommandShortcut={true}
-                onChange={()=>console.log(editorRef.current.getInstance().getMarkdown())}
+            <MdEditor
+                value={aiOutput || 'Your Result will appear here!'}
+                renderHTML={text => mdParser.render(text)}
+                view={{ menu: false, md: false, html: true }}
+                canView={{ 
+                    menu: true, 
+                    md: true, 
+                    html: true, 
+                    fullScreen: false, 
+                    hideMenu: false,
+                    both: false // Added missing required property
+                }}
+                style={{ height: '600px' }}
+                readOnly={true}
             />
         </div>
     )
