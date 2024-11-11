@@ -3,22 +3,20 @@ import React from "react";
 import dynamic from 'next/dynamic';
 import { Button } from "@/components/ui/button";
 import { Copy } from "lucide-react";
-
-// Import markdown-it with type declaration
 import MarkdownIt from 'markdown-it';
-declare module 'markdown-it';
+import type { EditorProps } from 'react-markdown-editor-lite';
 
-const MdEditor = dynamic(() => import('react-markdown-editor-lite'), {
+const MdEditor = dynamic<EditorProps>(() => import('react-markdown-editor-lite'), {
   ssr: false
 });
 
 import 'react-markdown-editor-lite/lib/index.css';
 
-interface props {
+interface Props {
     aiOutput: string
 }
 
-function OutputSection({ aiOutput }: props) {
+function OutputSection({ aiOutput }: Props) {
     const mdParser = new MarkdownIt();
 
     const handleCopy = () => {
@@ -43,7 +41,6 @@ function OutputSection({ aiOutput }: props) {
                     html: true, 
                     fullScreen: false, 
                     hideMenu: false,
-                    both: false // Added missing required property
                 }}
                 style={{ height: '600px' }}
                 readOnly={true}
